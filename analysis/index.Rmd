@@ -9,3 +9,7 @@ editor_options:
 ---
 
 Welcome to my research website.
+
+```{r fun-plot}
+plot(rnorm(5),rnorm(5),pch = 20)
+```
