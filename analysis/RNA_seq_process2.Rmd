@@ -1,0 +1,113 @@
+---
+title: "RNA_seq"
+author: "Yunqi Yang"
+date: "11/16/2019"
+output: html_document
+---
+
+**Description:** 
+
+This file is to preprocess the RNA_seq data, where we first narrow down to the leading SNP for each gene in naive condition. Then take the corresponding Gene-SNP pairs in other 3 conditions. 
+
+The resulting "top_snps.RData" contains 15678 significant Gene-SNP pairs in 4 conditions.
+
+
+```{r  eval = FALSE}
+
+setwd("/Users/nicholeyang/Desktop/Rotation/data/RNA_seq")
+
+library(readr)
+dt1 <- read_delim("RNA_FastQTL_IFNg_500kb_pvalues.sorted.txt",delim="\t", col_names = FALSE)
+dt2 <- read_delim("RNA_FastQTL_IFNg_SL1344_500kb_pvalues.sorted.txt.gz",delim="\t", col_names = FALSE)
+dt3 <- read_delim("RNA_FastQTL_naive_500kb_pvalues.sorted.txt.gz",delim="\t", col_names = FALSE)
+dt4 <- read_delim("RNA_FastQTL_SL1344_500kb_pvalues.sorted.txt.gz",delim="\t", col_names = FALSE)
+
+
+### types of the column in read_delim
+
+colnames(dt1) = c("phenotype_id", "chr", "pos", "snp_id", "distance", "p_nominal", "beta")
+colnames(dt2) = c("phenotype_id", "chr", "pos", "snp_id", "distance", "p_nominal", "beta")
+colnames(dt3) = c("phenotype_id", "chr", "pos", "snp_id", "distance", "p_nominal", "beta")
+colnames(dt4) = c("phenotype_id", "chr", "pos", "snp_id", "distance", "p_nominal", "beta")
+
+
+identical(dt1$phenotype_id, dt2$phenotype_id)
+identical(dt1$phenotype_id, dt3$phenotype_id)
+identical(dt1$phenotype_id, dt4$phenotype_id)
+
+```
+
+
+### Take the SNPs with p-value <0.05. 
+```{r  eval = FALSE}
+
+sub_naive = dt3[which(dt3$p_nominal<0.05), ]
+sub_IF = dt1[which(dt3$p_nominal<0.05), ]
+sub_SL = dt4[which(dt3$p_nominal<0.05), ]
+sub_IFSL = dt2[which(dt3$p_nominal<0.05), ]
+
+save(sub_naive, file = "sub_naive.RData")
+save(sub_IF, file = "sub_IF.RData")
+save(sub_SL, file = "sub_SL.RData")
+save(sub_IFSL, file = "sub_IFSL.RData")
+
+```
+
+
+
+```{r  }
+
+setwd("/Users/nicholeyang/Desktop/Rotation/data/RNA_seq")
+
+load("sub_naive.RData")
+load("sub_IF.RData")
+load("sub_IFSL.RData")
+load("sub_SL.RData")
+
+```
+
+
+
+### Trying to get the "top" SNP for each gene:
+```{r peter-code}
+
+sub_naive <- transform(sub_naive,phenotype_id = factor(phenotype_id))
+
+f <- function (x) {
+  row <- which.min(x$p_nominal)
+  return(x[row,])
+}
+
+naive_top_snps <- by(sub_naive,sub_naive$phenotype_id,f)
+naive_top_snps <- do.call(rbind,naive_top_snps)
+
+dim(naive_top_snps)
+```
+
+
+### merge data in all 4 conditions
+```{r  }
+
+dt_list = list(sub_IF, sub_IFSL, sub_SL)
+
+for (i in c(1:3)){
+  naive_top_snps = merge(naive_top_snps,dt_list[i], by = c("phenotype_id", "snp_id"), all = FALSE)
+}
+
+```
+
+```{r  }
+
+top_snps = naive_top_snps[,c(1:7,11,12,16,17,21,22)]
+colnames(top_snps) = c("phenotype_id", "snp_id", "chr", "pos", "distance", "p_nominal_naive", "beta_naive", "p_nominal_IF", "beta_IF", "p_nominal_IFSL", "beta_IFSL", "p_nominal_SL", "beta_SL")
+
+## remove duplicated ones. Not sure why introduced duplicates. 
+top_snps = top_snps[!duplicated(top_snps), ]
+dim(top_snps)
+save(top_snps, file = "top_snps.RData")
+
+```
+
+
+
+
