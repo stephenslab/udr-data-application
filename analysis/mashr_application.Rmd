@@ -1,0 +1,100 @@
+---
+title: "mashr_application"
+author: "Yunqi Yang"
+date: "11/19/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Remarks: 
+
+1. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
+
+2. Ways to access the fit. Log-likelihood and others?
+
+3. Seems that result doesn't make sense. Log-likelihood very large. 
+
+
+
+```{r  }
+
+library(ashr)
+library(mashr)
+
+```
+
+
+
+## format data to mashr format 
+
+```{r  }
+
+load("/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/top_snps.RData")
+
+dt_beta <- top_snps[,c("beta_naive", "beta_IF", "beta_IFSL", "beta_SL")]
+dt_pval <- top_snps[,c("p_nominal_naive", "p_nominal_IF", "p_nominal_IFSL", "p_nominal_SL")]
+
+dt_beta = as.matrix(dt_beta)
+dt_pval = as.matrix(dt_pval)
+
+head(dt_beta)
+head(dt_pval)
+
+str(dt_beta)
+str(dt_pval)
+```
+
+
+```{r  }
+
+dt_mash = mash_set_data(dt_beta, Shat = NULL, pval = dt_pval)
+head(dt_mash$Bhat)
+head(dt_mash$Shat)
+```
+
+
+
+```{r  }
+
+# Step2: set up covariance matrix 
+U.c = cov_canonical(dt_mash)  
+print(names(U.c))
+
+
+# Step3: fit model 
+m.c = mash(dt_mash, U.c)
+
+```
+
+
+```{r  }
+
+# Step4: extract posterior summarize 
+
+head(get_lfsr(m.c))   # local false sign rates
+head(get_pm(m.c))
+head(get_psd(m.c))
+
+head(get_significant_results(m.c))
+print(length(get_significant_results(m.c)))
+```
+
+
+## get sharing
+```{r  }
+
+print(get_pairwise_sharing(m.c, factor=0))
+print(get_loglik(m.c))
+
+
+```
+
+## estimate mixture proportion
+```{r  }
+
+print(get_estimated_pi(m.c))
+barplot(get_estimated_pi(m.c),las = 2)
+
+```
+
