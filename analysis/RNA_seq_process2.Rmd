@@ -1,5 +1,5 @@
 ---
-title: "RNA_seq"
+title: "RNAseq_Process"
 author: "Yunqi Yang"
 date: "11/16/2019"
 output: html_document
@@ -38,7 +38,7 @@ identical(dt1$phenotype_id, dt4$phenotype_id)
 ```
 
 
-### Take the SNPs with p-value <0.05. 
+### Take the gene-SNP pairs with p-value <0.05. 
 ```{r  eval = FALSE}
 
 sub_naive = dt3[which(dt3$p_nominal<0.05), ]
@@ -68,7 +68,7 @@ load("sub_SL.RData")
 
 
 
-### Trying to get the "top" SNP for each gene:
+### Get the "top" SNP for each gene:
 ```{r peter-code}
 
 sub_naive <- transform(sub_naive,phenotype_id = factor(phenotype_id))
@@ -85,7 +85,7 @@ dim(naive_top_snps)
 ```
 
 
-### merge data in all 4 conditions
+### Merge data in all 4 conditions based on top signals in naive condition:
 ```{r  }
 
 dt_list = list(sub_IF, sub_IFSL, sub_SL)
