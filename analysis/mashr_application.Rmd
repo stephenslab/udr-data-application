@@ -13,9 +13,11 @@ Remarks:
 
 2. For data preprocessing, we first filter with the criteria p-value <0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting "top_snps.RData" contains 15678 significant Gene-SNP pairs in 4 conditions.
 
-3. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
+3. The 4 conditions are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)
 
-4. Ways to access the fit. Log-likelihood and others?
+4. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
+
+5. Ways to assess the model fit. Log-likelihood and others?
 
 
 ```{r  }
@@ -110,6 +112,8 @@ mash_plot_meta(m.c,get_significant_results(m.c)[1])
 ## Effect Size Comparison 
 
 ### Posterior Mean VS. Original Effect
+
+Condtion 1-4 are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)
 ```{r  }
 
 par(mfrow = c(2,2))
