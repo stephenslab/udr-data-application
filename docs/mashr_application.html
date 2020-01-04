@@ -547,10 +547,10 @@ data/top_snps.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtree892e43b074077fbb5670c7640359017a0aba5800targetblank892e43ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/mash-single-cell-rnaseq/tree/892e43b074077fbb5670c7640359017a0aba5800" target="_blank">892e43b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtree07625ebff67bbeaf65eb1804fb28340e5ac743c3targetblank07625eba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/mash-single-cell-rnaseq/tree/07625ebff67bbeaf65eb1804fb28340e5ac743c3" target="_blank">07625eb</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtree892e43b074077fbb5670c7640359017a0aba5800targetblank892e43ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtree07625ebff67bbeaf65eb1804fb28340e5ac743c3targetblank07625eba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -565,9 +565,6 @@ Ignored files:
 Untracked files:
     Untracked:  data/top_snps.RData
     Untracked:  top_snps.RData
-
-Unstaged changes:
-    Modified:   analysis/RNA_seq_process2.Rmd
 
 </code></pre>
 <p>
@@ -606,6 +603,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/07625ebff67bbeaf65eb1804fb28340e5ac743c3/analysis/mashr_application.Rmd" target="_blank">07625eb</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-04
+</td>
+<td>
+wflow_publish(“analysis/mashr_application.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/stephenslab/mash-single-cell-rnaseq/f74b3e41394c08da7f8898fa52ff722924b90be0/docs/mashr_application.html" target="_blank">f74b3e4</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -668,8 +699,9 @@ wflow_publish(“analysis/mashr_application.Rmd”, verbose = TRUE)
 <ol style="list-style-type: decimal">
 <li><p>Used data from “Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response” <a href="https://doi.org/10.1038/s41588-018-0046-7" class="uri">https://doi.org/10.1038/s41588-018-0046-7</a>. eQTLs from 4 conditions downloaded from <a href="https://zenodo.org/record/1158560#.Xgjl5BdKhp8" class="uri">https://zenodo.org/record/1158560#.Xgjl5BdKhp8</a>.</p></li>
 <li><p>For data preprocessing, we first filter with the criteria p-value &lt;0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting “top_snps.RData” contains 15678 significant Gene-SNP pairs in 4 conditions.</p></li>
+<li><p>The 4 conditions are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)</p></li>
 <li><p>Mashr re-estimate the effect size of SNPs, incorporating information across conditions.</p></li>
-<li><p>Ways to access the fit. Log-likelihood and others?</p></li>
+<li><p>Ways to assess the model fit. Log-likelihood and others?</p></li>
 </ol>
 <pre class="r"><code>library(ashr)
 library(mashr)</code></pre>
@@ -730,11 +762,11 @@ print(names(U.c))</code></pre>
 <pre class="r"><code># Step3: fit model 
 m.c = mash(dt_mash, U.c)</code></pre>
 <pre><code> - Computing 15678 x 253 likelihood matrix.
- - Likelihood calculations took 2.52 seconds.
+ - Likelihood calculations took 2.49 seconds.
  - Fitting model with 253 mixture components.
- - Model fitting took 14.23 seconds.
+ - Model fitting took 14.10 seconds.
  - Computing posterior matrices.
- - Computation allocated took 13.56 seconds.</code></pre>
+ - Computation allocated took 12.65 seconds.</code></pre>
 <pre class="r"><code># Step4: extract posterior summarize 
 
 head(get_lfsr(m.c))   # local false sign rates</code></pre>
@@ -826,11 +858,49 @@ Nicholeyang0215
 </div>
 <pre class="r"><code>mash_plot_meta(m.c,get_significant_results(m.c)[1])</code></pre>
 <p><img src="figure/mashr_application.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/f74b3e41394c08da7f8898fa52ff722924b90be0/docs/figure/mashr_application.Rmd/unnamed-chunk-8-1.png" target="_blank">f74b3e4</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="effect-size-comparison" class="section level2">
 <h2>Effect Size Comparison</h2>
 <div id="posterior-mean-vs.-original-effect" class="section level3">
 <h3>Posterior Mean VS. Original Effect</h3>
+<p>Condtion 1-4 are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)</p>
 <pre class="r"><code>par(mfrow = c(2,2))
 
 for (i in c(1:4)){
@@ -840,6 +910,43 @@ for (i in c(1:4)){
   
 }</code></pre>
 <p><img src="figure/mashr_application.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/f74b3e41394c08da7f8898fa52ff722924b90be0/docs/figure/mashr_application.Rmd/unnamed-chunk-9-1.png" target="_blank">f74b3e4</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="scaled-by-standard-deviation-posterior-mean-vs.-original-effect" class="section level3">
 <h3>Scaled by standard deviation: Posterior Mean VS. Original Effect</h3>
@@ -851,6 +958,43 @@ for ( i in c(1:4)){
   
 }</code></pre>
 <p><img src="figure/mashr_application.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/f74b3e41394c08da7f8898fa52ff722924b90be0/docs/figure/mashr_application.Rmd/unnamed-chunk-10-1.png" target="_blank">f74b3e4</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-04
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
