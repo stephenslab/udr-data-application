@@ -1,7 +1,7 @@
 ---
-title: "mashr_application"
+title: "mashr_application1"
 author: "Yunqi Yang"
-date: "11/19/2019"
+date: "12/8/2019"
 output:
   pdf_document: default
   html_document: default
@@ -9,12 +9,13 @@ output:
 
 Remarks: 
 
-1. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
+1. Used data from "Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response" https://doi.org/10.1038/s41588-018-0046-7. eQTLs from 4 conditions downloaded from https://zenodo.org/record/1158560#.Xgjl5BdKhp8.
 
-2. Ways to access the fit. Log-likelihood and others?
+2. For data preprocessing, we first filter with the criteria p-value <0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting "top_snps.RData" contains 15678 significant Gene-SNP pairs in 4 conditions.
 
-3. Seems that result doesn't make sense. Log-likelihood very large. 
+3. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
 
+4. Ways to access the fit. Log-likelihood and others?
 
 
 ```{r  }
@@ -26,7 +27,7 @@ library(mashr)
 
 
 
-## format data to mashr format 
+## Format data to mashr format 
 
 ```{r  }
 
@@ -41,11 +42,12 @@ dt_pval = as.matrix(dt_pval)
 head(dt_beta)
 head(dt_pval)
 
-str(dt_beta)
-str(dt_pval)
+#str(dt_beta)
+#str(dt_pval)
 ```
 
 
+## Run mashr
 ```{r  }
 
 dt_mash = mash_set_data(dt_beta, Shat = NULL, pval = dt_pval)
@@ -81,20 +83,61 @@ print(length(get_significant_results(m.c)))
 ```
 
 
-## get sharing
+## Get sharing
 ```{r  }
 
 print(get_pairwise_sharing(m.c, factor=0))
 print(get_loglik(m.c))
 
-
 ```
 
-## estimate mixture proportion
+## Estimate mixture proportion
 ```{r  }
 
 print(get_estimated_pi(m.c))
 barplot(get_estimated_pi(m.c),las = 2)
 
 ```
+
+
+```{r  }
+
+mash_plot_meta(m.c,get_significant_results(m.c)[1])
+
+```
+
+
+## Effect Size Comparison 
+
+### Posterior Mean VS. Original Effect
+```{r  }
+
+par(mfrow = c(2,2))
+
+for (i in c(1:4)){
+  
+  plot(dt_mash$Bhat[,i], get_pm(m.c)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
+  abline(coef = c(0,1), col = "red")
+  
+}
+
+```
+
+
+
+### Scaled by standard deviation: Posterior Mean VS. Original Effect 
+```{r  }
+
+par(mfrow = c(2,2))
+for ( i in c(1:4)){
+  
+  plot(dt_mash$Bhat[,i]/dt_mash$Shat[,i], get_pm(m.c)[,i]/get_psd(m.c)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
+  abline(coef = c(0,1), col = "red")
+  
+}
+
+```
+
+
+
 
