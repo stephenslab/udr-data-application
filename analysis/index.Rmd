@@ -8,8 +8,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+These are my analyses:
 
-```{r fun-plot}
-plot(rnorm(5),rnorm(5),pch = 20)
-```
++ [mashr application](mashr_application.html)
+
