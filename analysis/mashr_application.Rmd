@@ -17,7 +17,9 @@ Remarks:
 
 4. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
 
-5. Ways to assess the model fit. Log-likelihood and others?
+5. Using both canonical covariances + data-driven covariances provide better fit. 
+
+6. Ways to assess the model fit. Log-likelihood and others?
 
 
 ```{r  }
@@ -49,7 +51,7 @@ head(dt_pval)
 ```
 
 
-## Run mashr
+## Run mashr (using only canonical covariance structures)
 ```{r  }
 
 dt_mash = mash_set_data(dt_beta, Shat = NULL, pval = dt_pval)
@@ -63,8 +65,6 @@ head(dt_mash$Shat)
 
 # Step2: set up covariance matrix 
 U.c = cov_canonical(dt_mash)  
-print(names(U.c))
-
 
 # Step3: fit model 
 m.c = mash(dt_mash, U.c)
@@ -141,6 +141,40 @@ for ( i in c(1:4)){
 }
 
 ```
+
+
+
+## Run mashr (canonical covariances + data-driven covariance)
+```{r  }
+
+U.pca = cov_pca(dt_mash, 4)
+print(names(U.pca))
+U.ed = cov_ed(dt_mash, U.pca)
+
+
+```
+
+
+
+```{r }
+
+m.ed = mash(dt_mash, U.ed)
+U.c = cov_canonical(dt_mash)  
+m = mash(dt_mash, c(U.c,U.ed))
+
+```
+
+## Result comparison of using only canonical covariances vs. data-driven covariances vs. both 
+
+```{r  }
+
+print(get_loglik(m.c),digits = 10)
+print(get_loglik(m.ed),digits = 10)
+print(get_loglik(m),digits = 10)
+
+
+```
+
 
 
 
