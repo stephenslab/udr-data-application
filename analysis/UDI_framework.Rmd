@@ -1,0 +1,128 @@
+---
+title: "UDIframework"
+author: "Yunqi Yang"
+date: "1/10/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r  }
+
+library(ashr)
+library(mashr)
+library(plyr)
+
+```
+
+
+## Input mashr data 
+```{r  }
+
+load("/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/top_snps.RData")
+
+dt_beta <- top_snps[,c("beta_naive", "beta_IF", "beta_IFSL", "beta_SL")]
+dt_pval <- top_snps[,c("p_nominal_naive", "p_nominal_IF", "p_nominal_IFSL", "p_nominal_SL")]
+
+dt_beta = as.matrix(dt_beta)
+dt_pval = as.matrix(dt_pval)
+
+dt_mash = mash_set_data(dt_beta, Shat = NULL, pval = dt_pval)
+
+```
+
+
+## Functions from 
+
+https://github.com/stephenslab/mashr/blob/master/R/cov_udi.R
+
+```{r  }
+
+n_conditions = function(data){
+  
+  n = dim(data$V)[1]
+  return(n)
+  
+}
+
+udi_model_matrix = function(R) {
+  all = expand.grid(rep(list(c("U", "D", "I")), R))
+  nD = apply(all, 1, function(x) {
+    sum(x == "D")
+  })
+  return(all[nD > 0, ])
+}
+
+
+cov_udi = function(data, model = udi_model_matrix(n_conditions(data))) {
+  if(is.vector(model)){model = matrix(model,nrow=1)}
+  res = alply(model, 1, cov_udi_single, data = data)
+  attributes(res) = NULL
+  names(res) = names_cov_udi(model)
+  return(res)
+}
+
+
+```
+
+
+```{r  }
+
+cov_udi_single = function(data, model) {
+  R = n_conditions(data)
+  V = data$V
+
+  res = matrix(0, ncol = R, nrow = R) # holds result
+  D = which(model == "D")
+  U = which(model == "U")
+  I = which(model == "I")
+  if ((length(D) + length(U) + length(I)) != R) {
+    stop("model must be vector of length R with elements U, D, I")
+  }
+  if (length(D) == 0) {
+    stop("model must have at least one direct association")
+  }
+  VDD = V[D, D, drop = FALSE]
+  VDU = V[D, U, drop = FALSE]
+  VUU = V[U, U, drop = FALSE]
+
+  if (length(U) > 0) {
+    U0 = VDD - VDU %*% chol2inv(chol(VUU)) %*% t(VDU)
+  } else {
+    U0 = VDD
+  }
+  res[D, D] = U0
+
+  # Here Ic means Icomplement = (U,D)
+  Ic = c(U, D)
+  VIIc = V[I, Ic, drop = FALSE]
+  VIcIc = V[Ic, Ic, drop = FALSE]
+  VIcIcinv = chol2inv(chol(VIcIc))
+
+  BD = VIcIcinv[, (1 + length(U)):(length(U) + length(D)), drop = FALSE] # just the D columns of that matrix
+
+  res[I, D] = VIIc %*% BD %*% U0
+  res[D, I] = t(res[I, D])
+
+  res[I, I] = VIIc %*% BD %*% U0 %*% t(BD) %*% t(VIIc)
+
+  #res = list(res=res)
+  #names(res) = paste0(c("cov_udi_",model),collapse="")
+  return(res)
+}
+
+names_cov_udi = function(model){
+  apply(model,1,function(x){paste0(c("cov_udi_",x),collapse="")})
+}
+
+
+```
+
+
+```{r  }
+
+cov_udi(dt_mash)
+
+```
+
+
