@@ -432,7 +432,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-08
+<strong>Last updated:</strong> 2020-01-14
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -539,6 +539,14 @@ relative
 data/top_snps.RData
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/random_snps.RData
+</td>
+<td style="text-align:left;">
+data/random_snps.RData
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -547,10 +555,10 @@ data/top_snps.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtreec2c7daaf7e2119067ff26264774c1e4b1612e95atargetblankc2c7daaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/mash-single-cell-rnaseq/tree/c2c7daaf7e2119067ff26264774c1e4b1612e95a" target="_blank">c2c7daa</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtreebd319b837969339c2586c19bcd0536ccea28bf70targetblankbd319b8a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/mash-single-cell-rnaseq/tree/bd319b837969339c2586c19bcd0536ccea28bf70" target="_blank">bd319b8</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtreec2c7daaf7e2119067ff26264774c1e4b1612e95atargetblankc2c7daaa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomstephenslabmashsinglecellrnaseqtreebd319b837969339c2586c19bcd0536ccea28bf70targetblankbd319b8a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -560,11 +568,19 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
 
 Untracked files:
+    Untracked:  GSE71220_series_matrix.txt.gz
+    Untracked:  analysis/random_snps.RData
+    Untracked:  data/dt_all.RData
+    Untracked:  data/random_snps.RData
     Untracked:  data/top_snps.RData
     Untracked:  top_snps.RData
+
+Unstaged changes:
+    Modified:   analysis/RNA_seq_process2.Rmd
 
 </code></pre>
 <p>
@@ -603,6 +619,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/bd319b837969339c2586c19bcd0536ccea28bf70/analysis/mashr_application.Rmd" target="_blank">bd319b8</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-14
+</td>
+<td>
+wflow_publish(“analysis/mashr_application.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/stephenslab/mash-single-cell-rnaseq/36610918f820678e90add4d5229b0ca97b4c278e/docs/mashr_application.html" target="_blank">3661091</a>
+</td>
+<td>
+Nicholeyang0215
+</td>
+<td>
+2020-01-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -749,215 +799,95 @@ wflow_publish(“analysis/mashr_application.Rmd”, verbose = TRUE)
 <p>Remarks:</p>
 <ol style="list-style-type: decimal">
 <li><p>Used data from “Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response” <a href="https://doi.org/10.1038/s41588-018-0046-7" class="uri">https://doi.org/10.1038/s41588-018-0046-7</a>. eQTLs from 4 conditions downloaded from <a href="https://zenodo.org/record/1158560#.Xgjl5BdKhp8" class="uri">https://zenodo.org/record/1158560#.Xgjl5BdKhp8</a>.</p></li>
-<li><p>For data preprocessing, we first filter with the criteria p-value &lt;0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting “top_snps.RData” contains 15678 significant Gene-SNP pairs in 4 conditions.</p></li>
+<li><p>For selecting strong signals: we first filter with the criteria p-value &lt;0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting “top_snps.RData” contains 15678 significant Gene-SNP pairs in 4 conditions.</p></li>
 <li><p>The 4 conditions are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)</p></li>
-<li><p>Mashr re-estimate the effect size of SNPs, incorporating information across conditions.</p></li>
-<li><p>Using both canonical covariances + data-driven covariances provide better fit.</p></li>
-<li><p>Ways to assess the model fit. Log-likelihood and others?</p></li>
+<li><ol style="list-style-type: decimal">
+<li>Use strong signals to learn data-driven covariance patterns. (2) Fit models on the random subset of data, to learn weights for data-driven covariance matrix + canonical covariance matrix.</li>
+</ol></li>
+<li><p>Ways to assess the model fit.</p></li>
+<li><p>Compared the log-likelihood with/without ED step: extremely similar.</p></li>
 </ol>
 <pre class="r"><code>library(ashr)
 library(mashr)</code></pre>
 <div id="format-data-to-mashr-format" class="section level2">
 <h2>Format data to mashr format</h2>
 <pre class="r"><code>load(&quot;/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/top_snps.RData&quot;)
+load(&quot;/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/random_snps.RData&quot;)
 
-dt_beta &lt;- top_snps[,c(&quot;beta_naive&quot;, &quot;beta_IF&quot;, &quot;beta_IFSL&quot;, &quot;beta_SL&quot;)]
-dt_pval &lt;- top_snps[,c(&quot;p_nominal_naive&quot;, &quot;p_nominal_IF&quot;, &quot;p_nominal_IFSL&quot;, &quot;p_nominal_SL&quot;)]
+dt_beta_top &lt;- top_snps[,c(&quot;beta_naive&quot;, &quot;beta_IF&quot;, &quot;beta_IFSL&quot;, &quot;beta_SL&quot;)]
+dt_pval_top &lt;- top_snps[,c(&quot;p_nominal_naive&quot;, &quot;p_nominal_IF&quot;, &quot;p_nominal_IFSL&quot;, &quot;p_nominal_SL&quot;)]
 
-dt_beta = as.matrix(dt_beta)
-dt_pval = as.matrix(dt_pval)
 
-head(dt_beta)</code></pre>
-<pre><code>  beta_naive    beta_IF  beta_IFSL    beta_SL
-1 -0.3370090 -0.4037950 -0.0941426 -0.2029850
-2 -0.0743763 -0.0419751 -0.0325720 -0.0214099
-3 -0.0786190 -0.0507808 -0.0591935 -0.0275128
-4  0.0826863 -0.0162367 -0.0407589  0.0786256
-5 -0.4299870 -0.3545930 -0.2523280 -0.2987360
-6 -0.3760470 -0.0694328  0.0700316 -0.0902658</code></pre>
-<pre class="r"><code>head(dt_pval)</code></pre>
-<pre><code>  p_nominal_naive p_nominal_IF p_nominal_IFSL p_nominal_SL
-1      0.00061327   0.00140049      0.5007650    0.0545107
-2      0.00121529   0.08250130      0.1340060    0.3738330
-3      0.00117232   0.04579800      0.0610855    0.5071570
-4      0.00256488   0.68539900      0.5733360    0.0466930
-5      0.03554660   0.03811650      0.0227163    0.0728410
-6      0.01376920   0.37466200      0.2537470    0.5845360</code></pre>
-<pre class="r"><code>#str(dt_beta)
-#str(dt_pval)</code></pre>
+dt_beta_random &lt;- random_snps[,c(&quot;beta_naive&quot;, &quot;beta_IF&quot;, &quot;beta_IFSL&quot;, &quot;beta_SL&quot;)]
+dt_pval_random &lt;- random_snps[,c(&quot;p_nominal_naive&quot;, &quot;p_nominal_IF&quot;, &quot;p_nominal_IFSL&quot;, &quot;p_nominal_SL&quot;)]
+
+dt_beta_top = as.matrix(dt_beta_top)
+dt_pval_top = as.matrix(dt_pval_top)
+
+dt_beta_random = as.matrix(dt_beta_random)
+dt_pval_random = as.matrix(dt_pval_random)</code></pre>
 </div>
-<div id="run-mashr-using-only-canonical-covariance-structures" class="section level2">
-<h2>Run mashr (using only canonical covariance structures)</h2>
-<pre class="r"><code>dt_mash = mash_set_data(dt_beta, Shat = NULL, pval = dt_pval)
-head(dt_mash$Bhat)</code></pre>
-<pre><code>  beta_naive    beta_IF  beta_IFSL    beta_SL
-1 -0.3370090 -0.4037950 -0.0941426 -0.2029850
-2 -0.0743763 -0.0419751 -0.0325720 -0.0214099
-3 -0.0786190 -0.0507808 -0.0591935 -0.0275128
-4  0.0826863 -0.0162367 -0.0407589  0.0786256
-5 -0.4299870 -0.3545930 -0.2523280 -0.2987360
-6 -0.3760470 -0.0694328  0.0700316 -0.0902658</code></pre>
-<pre class="r"><code>head(dt_mash$Shat)</code></pre>
-<pre><code>  beta_naive    beta_IF  beta_IFSL    beta_SL
-1 0.09837735 0.12640121 0.13982546 0.10556982
-2 0.02298923 0.02417428 0.02173655 0.02407456
-3 0.02422377 0.02542536 0.03160567 0.04148048
-4 0.02741970 0.04008005 0.07237725 0.03952874
-5 0.20455348 0.17100359 0.11075895 0.16653569
-6 0.15266426 0.07820994 0.06136150 0.16508883</code></pre>
-<pre class="r"><code># Step2: set up covariance matrix 
-U.c = cov_canonical(dt_mash)  
-
-# Step3: fit model 
-m.c = mash(dt_mash, U.c)</code></pre>
-<pre><code> - Computing 15678 x 253 likelihood matrix.
- - Likelihood calculations took 2.54 seconds.
- - Fitting model with 253 mixture components.
- - Model fitting took 14.07 seconds.
+<div id="correlation-structure" class="section level2">
+<h2>Correlation structure</h2>
+<pre class="r"><code>data.temp = mash_set_data(dt_beta_random, Shat = NULL, pval = dt_pval_random)
+Vhat = estimate_null_correlation_simple(data.temp)
+rm(data.temp)</code></pre>
+<pre class="r"><code>data.strong = mash_set_data(dt_beta_top, Shat = NULL, pval = dt_pval_top, V=Vhat)
+data.random = mash_set_data(dt_beta_random, Shat = NULL, pval = dt_pval_random, V=Vhat)</code></pre>
+</div>
+<div id="data-driven-covariance" class="section level2">
+<h2>Data driven covariance</h2>
+<pre class="r"><code>U.pca = cov_pca(data.strong,4)
+U.ed = cov_ed(data.strong, U.pca)</code></pre>
+</div>
+<div id="fit-mashr-model-with-both-canonical-data-driven-covariance-structure" class="section level2">
+<h2>Fit mashr model with both canonical &amp; data-driven covariance structure</h2>
+<pre class="r"><code>U.c = cov_canonical(data.random)
+m = mash(data.random, Ulist = c(U.ed,U.c))</code></pre>
+<pre><code> - Computing 40000 x 393 likelihood matrix.
+ - Likelihood calculations took 10.09 seconds.
+ - Fitting model with 393 mixture components.
+ - Model fitting took 83.44 seconds.
  - Computing posterior matrices.
- - Computation allocated took 12.43 seconds.</code></pre>
-<pre class="r"><code># Step4: extract posterior summarize 
-
-head(get_lfsr(m.c))   # local false sign rates</code></pre>
-<pre><code>    beta_naive     beta_IF   beta_IFSL     beta_SL
-1 1.461406e-05 0.001824021 0.004385345 0.002141932
-2 1.876247e-04 0.099080350 0.099233110 0.099949419
-3 3.520635e-05 0.016831278 0.016881393 0.018060472
-4 2.629536e-03 0.495295005 0.494371262 0.468454622
-5 4.657397e-04 0.001811972 0.001688937 0.001921296
-6 7.303887e-02 0.855488753 0.873244307 0.858295958</code></pre>
-<pre class="r"><code>head(get_pm(m.c))</code></pre>
-<pre><code>   beta_naive      beta_IF    beta_IFSL      beta_SL
-1 -0.24998712 -0.250345427 -0.243688943 -0.245792041
-2 -0.04582012 -0.038363102 -0.038302041 -0.038231226
-3 -0.05954638 -0.058071103 -0.058122522 -0.057942265
-4  0.06609349  0.024188691  0.024158574  0.027910831
-5 -0.26644629 -0.265655730 -0.264519032 -0.265028508
-6 -0.19970374 -0.005753663 -0.002717302 -0.005782514</code></pre>
-<pre class="r"><code>head(get_psd(m.c))</code></pre>
-<pre><code>  beta_naive    beta_IF  beta_IFSL    beta_SL
-1 0.05799366 0.06082965 0.06221880 0.05897826
-2 0.01624149 0.01686986 0.01685286 0.01691490
-3 0.01488694 0.01620381 0.01625526 0.01650750
-4 0.02791045 0.02987130 0.03139002 0.03048489
-5 0.07604640 0.07563894 0.07428845 0.07540395
-6 0.13864721 0.02489209 0.02284952 0.02834736</code></pre>
-<pre class="r"><code>head(get_significant_results(m.c))</code></pre>
-<pre><code> 661 2075 2694 3191 3304 3305 
- 661 2068 2687 3184 3297 3298 </code></pre>
-<pre class="r"><code>print(length(get_significant_results(m.c)))</code></pre>
-<pre><code>[1] 15450</code></pre>
+ - Computation allocated took 139.36 seconds.</code></pre>
+<pre class="r"><code>## Use learned weights to gain posterior estimation for strong signals
+m2 = mash(data.strong, g=get_fitted_g(m), fixg=TRUE)</code></pre>
+<pre><code> - Computing 15678 x 393 likelihood matrix.
+ - Likelihood calculations took 3.83 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 19.45 seconds.</code></pre>
 </div>
-<div id="get-sharing" class="section level2">
-<h2>Get sharing</h2>
-<pre class="r"><code>print(get_pairwise_sharing(m.c, factor=0))</code></pre>
-<pre><code>           beta_naive   beta_IF beta_IFSL   beta_SL
-beta_naive  1.0000000 0.9922977 0.9803883 0.9858900
-beta_IF     0.9922977 1.0000000 0.9977311 0.9984487
-beta_IFSL   0.9803883 0.9977311 1.0000000 0.9989194
-beta_SL     0.9858900 0.9984487 0.9989194 1.0000000</code></pre>
-<pre class="r"><code>print(get_loglik(m.c))</code></pre>
-<pre><code>[1] 39976.75</code></pre>
+<div id="estimate-data-driven-covariance" class="section level2">
+<h2>Estimate data driven covariance</h2>
+<pre class="r"><code>U.pca = cov_pca(data.strong,4)
+U.ed = cov_ed(data.strong, U.pca)</code></pre>
 </div>
-<div id="estimate-mixture-proportion" class="section level2">
-<h2>Estimate mixture proportion</h2>
-<pre class="r"><code>print(get_estimated_pi(m.c))</code></pre>
-<pre><code>         null      identity    beta_naive       beta_IF     beta_IFSL 
- 0.0006367433  0.0000000000  0.2126963603  0.0000000000  0.0000000000 
+<div id="fit-mashr-model-with-both-canonical-data-driven-covariance-structure-1" class="section level2">
+<h2>Fit mashr model with both canonical &amp; data-driven covariance structure</h2>
+<pre class="r"><code>U.c = cov_canonical(data.random)
+m = mash(data.random, Ulist = c(U.ed,U.c))</code></pre>
+<pre><code> - Computing 40000 x 393 likelihood matrix.
+ - Likelihood calculations took 9.21 seconds.
+ - Fitting model with 393 mixture components.
+ - Model fitting took 85.87 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 150.04 seconds.</code></pre>
+<pre class="r"><code>## Use learned weights to gain posterior estimation for strong signals
+m2 = mash(data.strong, g=get_fitted_g(m), fixg=TRUE)</code></pre>
+<pre><code> - Computing 15678 x 393 likelihood matrix.
+ - Likelihood calculations took 3.71 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 20.70 seconds.</code></pre>
+<pre class="r"><code>print(get_loglik(m))</code></pre>
+<pre><code>[1] 205233</code></pre>
+<pre class="r"><code>print(get_estimated_pi(m))</code></pre>
+<pre><code>         null      ED_PCA_1      ED_PCA_2      ED_PCA_3      ED_PCA_4 
+ 3.865163e-01  5.281307e-03  1.511466e-04  0.000000e+00  3.692821e-02 
+      ED_tPCA      identity    beta_naive       beta_IF     beta_IFSL 
+ 2.683872e-04  3.302612e-05  0.000000e+00  0.000000e+00  0.000000e+00 
       beta_SL equal_effects  simple_het_1  simple_het_2  simple_het_3 
- 0.0000000000  0.7166936937  0.0000000000  0.0000000000  0.0699732027 </code></pre>
-<pre class="r"><code>barplot(get_estimated_pi(m.c),las = 2)</code></pre>
-<p><img src="figure/mashr_application.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
-Past versions of unnamed-chunk-7-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/59bbc5e2bdc3acd37548ad94a5a5fa19c3dc8aea/docs/figure/mashr_application.Rmd/unnamed-chunk-7-1.png" target="_blank">59bbc5e</a>
-</td>
-<td>
-Nicholeyang0215
-</td>
-<td>
-2019-11-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>mash_plot_meta(m.c,get_significant_results(m.c)[1])</code></pre>
-<p><img src="figure/mashr_application.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/stephenslab/mash-single-cell-rnaseq/blob/f74b3e41394c08da7f8898fa52ff722924b90be0/docs/figure/mashr_application.Rmd/unnamed-chunk-8-1.png" target="_blank">f74b3e4</a>
-</td>
-<td>
-Nicholeyang0215
-</td>
-<td>
-2020-01-04
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="effect-size-comparison" class="section level2">
-<h2>Effect Size Comparison</h2>
-<div id="posterior-mean-vs.-original-effect" class="section level3">
-<h3>Posterior Mean VS. Original Effect</h3>
-<p>Condtion 1-4 are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)</p>
-<pre class="r"><code>par(mfrow = c(2,2))
-
-for (i in c(1:4)){
-  
-  plot(dt_mash$Bhat[,i], get_pm(m.c)[,i], pch = 20, ylab = &quot;Posterior Mean&quot;, xlab = &quot;Original Effect&quot;, main = paste(&#39;Condition_&#39;,i, sep = &quot;&quot;))
-  abline(coef = c(0,1), col = &quot;red&quot;)
-  
-}</code></pre>
+ 0.000000e+00  5.530311e-01  0.000000e+00  2.458072e-04  1.754470e-02 </code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(m),las = 2)</code></pre>
 <p><img src="figure/mashr_application.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -996,16 +926,7 @@ Nicholeyang0215
 </table>
 </div>
 </div>
-</div>
-<div id="scaled-by-standard-deviation-posterior-mean-vs.-original-effect" class="section level3">
-<h3>Scaled by standard deviation: Posterior Mean VS. Original Effect</h3>
-<pre class="r"><code>par(mfrow = c(2,2))
-for ( i in c(1:4)){
-  
-  plot(dt_mash$Bhat[,i]/dt_mash$Shat[,i], get_pm(m.c)[,i]/get_psd(m.c)[,i], pch = 20, ylab = &quot;Posterior Mean&quot;, xlab = &quot;Original Effect&quot;, main = paste(&#39;Condition_&#39;,i, sep = &quot;&quot;))
-  abline(coef = c(0,1), col = &quot;red&quot;)
-  
-}</code></pre>
+<pre class="r"><code>mash_plot_meta(m,get_significant_results(m)[1])</code></pre>
 <p><img src="figure/mashr_application.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
@@ -1045,37 +966,78 @@ Nicholeyang0215
 </div>
 </div>
 </div>
+<div id="effect-size-comparison" class="section level2">
+<h2>Effect Size Comparison</h2>
+<div id="posterior-mean-vs.-original-effect" class="section level3">
+<h3>Posterior Mean VS. Original Effect</h3>
+<p>Conditions 1-4 are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)</p>
+<div id="random-signal-posterior-comparison" class="section level4">
+<h4>random signal posterior comparison</h4>
+<pre class="r"><code>par(mfrow = c(2,2))
+
+for (i in c(1:4)){
+  
+  plot(data.random$Bhat[,i], get_pm(m)[,i], pch = 20, ylab = &quot;Posterior Mean&quot;, xlab = &quot;Original Effect&quot;, main = paste(&#39;Condition_&#39;,i, sep = &quot;&quot;))
+  abline(coef = c(0,1), col = &quot;red&quot;)
+  
+}</code></pre>
+<p><img src="figure/mashr_application.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="run-mashr-canonical-covariances-data-driven-covariance" class="section level2">
-<h2>Run mashr (canonical covariances + data-driven covariance)</h2>
-<pre class="r"><code>U.pca = cov_pca(dt_mash, 4)
-print(names(U.pca))</code></pre>
-<pre><code>[1] &quot;PCA_1&quot; &quot;PCA_2&quot; &quot;PCA_3&quot; &quot;PCA_4&quot; &quot;tPCA&quot; </code></pre>
-<pre class="r"><code>U.ed = cov_ed(dt_mash, U.pca)</code></pre>
-<pre class="r"><code>m.ed = mash(dt_mash, U.ed)</code></pre>
-<pre><code> - Computing 15678 x 141 likelihood matrix.
- - Likelihood calculations took 1.27 seconds.
- - Fitting model with 141 mixture components.
- - Model fitting took 5.12 seconds.
- - Computing posterior matrices.
- - Computation allocated took 12.38 seconds.</code></pre>
-<pre class="r"><code>U.c = cov_canonical(dt_mash)  
-m = mash(dt_mash, c(U.c,U.ed))</code></pre>
-<pre><code> - Computing 15678 x 393 likelihood matrix.
- - Likelihood calculations took 3.74 seconds.
+<div id="scaled-by-standard-deviation-posterior-mean-vs.-original-effect" class="section level4">
+<h4>Scaled by standard deviation: Posterior Mean VS. Original Effect</h4>
+<pre class="r"><code>par(mfrow = c(2,2))
+for ( i in c(1:4)){
+  
+  plot(data.random$Bhat[,i]/data.random$Shat[,i], get_pm(m)[,i]/get_psd(m)[,i], pch = 20, ylab = &quot;Posterior Mean&quot;, xlab = &quot;Original Effect&quot;, main = paste(&#39;Condition_&#39;,i, sep = &quot;&quot;))
+  abline(coef = c(0,1), col = &quot;red&quot;)
+  
+}</code></pre>
+<p><img src="figure/mashr_application.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="strong-signal-posterior-comparison" class="section level4">
+<h4>strong signal posterior comparison</h4>
+<pre class="r"><code>par(mfrow = c(2,2))
+
+for (i in c(1:4)){
+  
+  plot(data.strong$Bhat[,i], get_pm(m2)[,i], pch = 20, ylab = &quot;Posterior Mean&quot;, xlab = &quot;Original Effect&quot;, main = paste(&#39;Condition_&#39;,i, sep = &quot;&quot;))
+  abline(coef = c(0,1), col = &quot;red&quot;)
+  
+}</code></pre>
+<p><img src="figure/mashr_application.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="scaled-by-standard-deviation-posterior-mean-vs.-original-effect-1" class="section level4">
+<h4>Scaled by standard deviation: Posterior Mean VS. Original Effect</h4>
+<pre class="r"><code>par(mfrow = c(2,2))
+for ( i in c(1:4)){
+  
+  plot(data.strong$Bhat[,i]/data.strong$Shat[,i], get_pm(m2)[,i]/get_psd(m2)[,i], pch = 20, ylab = &quot;Posterior Mean&quot;, xlab = &quot;Original Effect&quot;, main = paste(&#39;Condition_&#39;,i, sep = &quot;&quot;))
+  abline(coef = c(0,1), col = &quot;red&quot;)
+  
+}</code></pre>
+<p><img src="figure/mashr_application.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="run-mashr-without-ed-step-loglikelihood-are-very-close." class="section level2">
+<h2>Run mashr without ED step: loglikelihood are very close.</h2>
+<div id="data-driven-covariance-1" class="section level3">
+<h3>Data driven covariance</h3>
+<pre class="r"><code>U.pca = cov_pca(data.strong,4)
+U.c = cov_canonical(data.random)
+m3 = mash(data.random, Ulist = c(U.pca,U.c))</code></pre>
+<pre><code> - Computing 40000 x 393 likelihood matrix.
+ - Likelihood calculations took 10.04 seconds.
  - Fitting model with 393 mixture components.
- - Model fitting took 35.21 seconds.
+ - Model fitting took 86.23 seconds.
  - Computing posterior matrices.
- - Computation allocated took 15.94 seconds.</code></pre>
-</div>
-<div id="result-comparison-of-using-only-canonical-covariances-vs.data-driven-covariances-vs.both" class="section level2">
-<h2>Result comparison of using only canonical covariances vs. data-driven covariances vs. both</h2>
-<pre class="r"><code>print(get_loglik(m.c),digits = 10)</code></pre>
-<pre><code>[1] 39976.75415</code></pre>
-<pre class="r"><code>print(get_loglik(m.ed),digits = 10)</code></pre>
-<pre><code>[1] 45043.82858</code></pre>
-<pre class="r"><code>print(get_loglik(m),digits = 10)</code></pre>
-<pre><code>[1] 45735.08141</code></pre>
+ - Computation allocated took 155.79 seconds.</code></pre>
+<pre class="r"><code>print(get_loglik(m))</code></pre>
+<pre><code>[1] 205233</code></pre>
+<pre class="r"><code>print(get_loglik(m3))</code></pre>
+<pre><code>[1] 205232.7</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(m3),las = 2)</code></pre>
+<p><img src="figure/mashr_application.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1117,6 +1079,7 @@ loaded via a namespace (and not attached):
 [37] assertthat_0.2.1  abind_1.4-5       httpuv_1.5.2     
 [40] stringi_1.3.1     doParallel_1.0.15 pscl_1.5.2       
 [43] truncnorm_1.0-8   SQUAREM_2017.10-1</code></pre>
+</div>
 </div>
 </div>
 
