@@ -11,15 +11,15 @@ Remarks:
 
 1. Used data from "Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response" https://doi.org/10.1038/s41588-018-0046-7. eQTLs from 4 conditions downloaded from https://zenodo.org/record/1158560#.Xgjl5BdKhp8.
 
-2. For data preprocessing, we first filter with the criteria p-value <0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting "top_snps.RData" contains 15678 significant Gene-SNP pairs in 4 conditions.
+2. For selecting strong signals: we first filter with the criteria p-value <0.05. Then, take the top signals (the most significant SNP for each gene) in naive condition, and filter gene-SNP pairs in other conditions based on top signals in naive condition. The resulting "top_snps.RData" contains 15678 significant Gene-SNP pairs in 4 conditions.
 
 3. The 4 conditions are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)
 
-4. Mashr re-estimate the effect size of SNPs, incorporating information across conditions. 
+4. (1) Use strong signals to learn data-driven covariance patterns. (2) Fit models on the random subset of data, to learn weights for data-driven covariance matrix + canonical covariance matrix. 
 
-5. Using both canonical covariances + data-driven covariances provide better fit. 
+5. Ways to assess the model fit. 
 
-6. Ways to assess the model fit. Log-likelihood and others?
+6. Compared the log-likelihood with/without ED step: extremely similar. 
 
 
 ```{r  }
@@ -32,79 +32,103 @@ library(mashr)
 
 
 ## Format data to mashr format 
-
 ```{r  }
 
 load("/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/top_snps.RData")
+load("/Users/nicholeyang/Desktop/Rotation/mash-single-cell-rnaseq/data/random_snps.RData")
 
-dt_beta <- top_snps[,c("beta_naive", "beta_IF", "beta_IFSL", "beta_SL")]
-dt_pval <- top_snps[,c("p_nominal_naive", "p_nominal_IF", "p_nominal_IFSL", "p_nominal_SL")]
-
-dt_beta = as.matrix(dt_beta)
-dt_pval = as.matrix(dt_pval)
-
-head(dt_beta)
-head(dt_pval)
-
-#str(dt_beta)
-#str(dt_pval)
-```
+dt_beta_top <- top_snps[,c("beta_naive", "beta_IF", "beta_IFSL", "beta_SL")]
+dt_pval_top <- top_snps[,c("p_nominal_naive", "p_nominal_IF", "p_nominal_IFSL", "p_nominal_SL")]
 
 
-## Run mashr (using only canonical covariance structures)
-```{r  }
+dt_beta_random <- random_snps[,c("beta_naive", "beta_IF", "beta_IFSL", "beta_SL")]
+dt_pval_random <- random_snps[,c("p_nominal_naive", "p_nominal_IF", "p_nominal_IFSL", "p_nominal_SL")]
 
-dt_mash = mash_set_data(dt_beta, Shat = NULL, pval = dt_pval)
-head(dt_mash$Bhat)
-head(dt_mash$Shat)
-```
+dt_beta_top = as.matrix(dt_beta_top)
+dt_pval_top = as.matrix(dt_pval_top)
 
-
-
-```{r  }
-
-# Step2: set up covariance matrix 
-U.c = cov_canonical(dt_mash)  
-
-# Step3: fit model 
-m.c = mash(dt_mash, U.c)
+dt_beta_random = as.matrix(dt_beta_random)
+dt_pval_random = as.matrix(dt_pval_random)
 
 ```
 
 
+
+## Correlation structure
 ```{r  }
 
-# Step4: extract posterior summarize 
-
-head(get_lfsr(m.c))   # local false sign rates
-head(get_pm(m.c))
-head(get_psd(m.c))
-
-head(get_significant_results(m.c))
-print(length(get_significant_results(m.c)))
-```
-
-
-## Get sharing
-```{r  }
-
-print(get_pairwise_sharing(m.c, factor=0))
-print(get_loglik(m.c))
+data.temp = mash_set_data(dt_beta_random, Shat = NULL, pval = dt_pval_random)
+Vhat = estimate_null_correlation_simple(data.temp)
+rm(data.temp)
 
 ```
 
-## Estimate mixture proportion
 ```{r  }
 
-print(get_estimated_pi(m.c))
-barplot(get_estimated_pi(m.c),las = 2)
+data.strong = mash_set_data(dt_beta_top, Shat = NULL, pval = dt_pval_top, V=Vhat)
+data.random = mash_set_data(dt_beta_random, Shat = NULL, pval = dt_pval_random, V=Vhat)
 
 ```
 
 
+## Data driven covariance
 ```{r  }
 
-mash_plot_meta(m.c,get_significant_results(m.c)[1])
+U.pca = cov_pca(data.strong,4)
+U.ed = cov_ed(data.strong, U.pca)
+
+```
+
+
+
+## Fit mashr model with both canonical & data-driven covariance structure
+```{r  }
+
+U.c = cov_canonical(data.random)
+m = mash(data.random, Ulist = c(U.ed,U.c))
+
+## Use learned weights to gain posterior estimation for strong signals
+m2 = mash(data.strong, g=get_fitted_g(m), fixg=TRUE)
+
+```
+
+
+
+
+
+## Estimate data driven covariance
+```{r  }
+
+U.pca = cov_pca(data.strong,4)
+U.ed = cov_ed(data.strong, U.pca)
+
+```
+
+
+
+## Fit mashr model with both canonical & data-driven covariance structure
+```{r  }
+
+U.c = cov_canonical(data.random)
+m = mash(data.random, Ulist = c(U.ed,U.c))
+
+## Use learned weights to gain posterior estimation for strong signals
+m2 = mash(data.strong, g=get_fitted_g(m), fixg=TRUE)
+```
+
+
+```{r  }
+
+print(get_loglik(m))
+print(get_estimated_pi(m))
+barplot(get_estimated_pi(m),las = 2)
+
+```
+
+
+```{r  }
+
+mash_plot_meta(m,get_significant_results(m)[1])
 
 ```
 
@@ -113,14 +137,16 @@ mash_plot_meta(m.c,get_significant_results(m.c)[1])
 
 ### Posterior Mean VS. Original Effect
 
-Condtion 1-4 are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)
+Conditions 1-4 are: naive/ IF/ IF+SL/ SL. (IF, SL are two drug treatments)
+
+#### random signal posterior comparison
 ```{r  }
 
 par(mfrow = c(2,2))
 
 for (i in c(1:4)){
   
-  plot(dt_mash$Bhat[,i], get_pm(m.c)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
+  plot(data.random$Bhat[,i], get_pm(m)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
   abline(coef = c(0,1), col = "red")
   
 }
@@ -129,13 +155,13 @@ for (i in c(1:4)){
 
 
 
-### Scaled by standard deviation: Posterior Mean VS. Original Effect 
+#### Scaled by standard deviation: Posterior Mean VS. Original Effect 
 ```{r  }
 
 par(mfrow = c(2,2))
 for ( i in c(1:4)){
   
-  plot(dt_mash$Bhat[,i]/dt_mash$Shat[,i], get_pm(m.c)[,i]/get_psd(m.c)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
+  plot(data.random$Bhat[,i]/data.random$Shat[,i], get_pm(m)[,i]/get_psd(m)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
   abline(coef = c(0,1), col = "red")
   
 }
@@ -144,37 +170,57 @@ for ( i in c(1:4)){
 
 
 
-## Run mashr (canonical covariances + data-driven covariance)
+#### strong signal posterior comparison
 ```{r  }
 
-U.pca = cov_pca(dt_mash, 4)
-print(names(U.pca))
-U.ed = cov_ed(dt_mash, U.pca)
+par(mfrow = c(2,2))
 
+for (i in c(1:4)){
+  
+  plot(data.strong$Bhat[,i], get_pm(m2)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
+  abline(coef = c(0,1), col = "red")
+  
+}
+
+```
+
+
+
+#### Scaled by standard deviation: Posterior Mean VS. Original Effect 
+```{r  }
+
+par(mfrow = c(2,2))
+for ( i in c(1:4)){
+  
+  plot(data.strong$Bhat[,i]/data.strong$Shat[,i], get_pm(m2)[,i]/get_psd(m2)[,i], pch = 20, ylab = "Posterior Mean", xlab = "Original Effect", main = paste('Condition_',i, sep = ""))
+  abline(coef = c(0,1), col = "red")
+  
+}
 
 ```
 
 
 
-```{r }
 
-m.ed = mash(dt_mash, U.ed)
-U.c = cov_canonical(dt_mash)  
-m = mash(dt_mash, c(U.c,U.ed))
+## Run mashr without ED step: loglikelihood are very close. 
+
+###  Data driven covariance
+```{r  }
+
+U.pca = cov_pca(data.strong,4)
+U.c = cov_canonical(data.random)
+m3 = mash(data.random, Ulist = c(U.pca,U.c))
 
 ```
-
-## Result comparison of using only canonical covariances vs. data-driven covariances vs. both 
 
 ```{r  }
 
-print(get_loglik(m.c),digits = 10)
-print(get_loglik(m.ed),digits = 10)
-print(get_loglik(m),digits = 10)
+print(get_loglik(m))
+print(get_loglik(m3))
+barplot(get_estimated_pi(m3),las = 2)
 
 
 ```
-
 
 
 
