@@ -1,0 +1,75 @@
+---
+title: "ukbbloodcell_analysis"
+author: "Yunqi Yang"
+date: "5/4/2021"
+output: html_document
+---
+
+```{r  }
+
+#devtools::install_github("stephenslab/udr")
+library(udr)
+
+```
+
+```{r  }
+
+
+
+
+## load data
+dat = readRDS('./data/ukbbloodcells_prepare.rds')
+flash = readRDS('./data/ukbbloodcells_prepare.flash.rds')  # 4
+pca = readRDS('./data/ukbbloodcells_prepare.pca.rds') # 4
+canonical = readRDS('./data/ukbbloodcells_prepare.canonical.rds')
+
+
+
+```
+
+
+```{r  }
+
+# prepare for the input
+U_unconstrained = c(flash,pca, list(as.matrix(dat$XtX)))
+V = cor(dat$null.z)
+```
+
+```{r  }
+
+
+f0 = ud_init(X = as.matrix(dat$strong.z), V = V, U_scaled = canonical, U_unconstrained = U_unconstrained, n_rank1=0)
+
+```
+
+
+```{r  eval= FALSE}
+
+# fit udr model (teem update + scale update)
+res1 = ud_fit(f0, control = list(unconstrained.update = "teem", resid.update = 'none', scaled.update = "em", maxiter=5000, tol = 1e-06), verbose=TRUE)
+
+
+## Error message: 
+## Error: callr subprocess failed: f() values at end points not of opposite sign
+
+```
+```
+
+```{r  }
+
+
+res2 = ud_fit(f0, control = list(unconstrained.update = "none", resid.update = 'none', scaled.update = "em", maxiter=5000, tol = 1e-06), verbose=TRUE)
+
+
+```
+
+
+```{r   }
+
+plot(res2$progress$iter, res2$progress$loglik)
+
+```
+
+
+
+
