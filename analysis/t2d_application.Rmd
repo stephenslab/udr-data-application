@@ -1,0 +1,107 @@
+---
+title: "t2d data application"
+author: "Yunqi Yang"
+date: "9/20/2022"
+output: html_document
+---
+
+### Description: Apply udr to type 2 diabetes dataset from Dr.Udler. 
+
+1. **Data Description**: In total, it contains 324 SNPs with 65 conditions. All SNPs are strong signals in at least one condition, meaning abs(z-score) >= 1.96. After remove SNPs with missing z-score, there are 305 SNPs. 
+
+2. **Initialization**: I randomly initialized 20 unconstrained $U$s and 4 rank1 $U$s for fitting. I use nuclear norm regularization with $\lambda$ (regularization strength) equals the number of conditions. $V$ is set to be identity matrix. 
+
+```{r}
+library("readxl")
+library(udr)
+library(gridExtra)
+dat = read_excel("./data/t2d.xlsx")
+```
+
+```{r}
+dat = data.frame(dat)
+rownames(dat) = dat[,1]
+dat = dat[,-1]
+```
+
+## Exploratory data analysis
+```{r}
+summary(dat)
+```
+
+```{r}
+# Select strong signals
+signals = apply(dat, 1, function(x) sum(abs(x) >= 1.96, na.rm = TRUE) != 0)
+# Remove NAs
+nas = apply(dat, 1, function(x) sum(is.na(x)) == 0)
+dat2 = dat[nas, ]
+```
+
+## Run udr
+```{r}
+R = ncol(dat2)
+K = 20
+V = diag(R) # Use identity matrix for now
+  
+set.seed(999)
+U.init = c()
+for (k in 1:K){
+  U.init[[k]] <- udr:::sim_unconstrained(R)
+}
+X = as.matrix(dat2)
+f0 = ud_init(X = X, V = V, U_scaled = NULL, U_unconstrained = U.init)
+```
+
+```{r}
+set.seed(1)
+fit1 = ud_fit(f0, control = list(unconstrained.update = "ted", rank1.update = "ted", resid.update = 'none', scaled.update = "fa", maxiter=1e3, tol = 1e-02, tol.lik = 1e-2, n0 = 0,
+                                   lambda = R), verbose=TRUE)
+```
+
+## Plot sharing patterns 
+```{r}
+plot_sharing = function(X, to_cor=FALSE, title="", remove_names=F) {
+        clrs <- colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                                       "#E0F3F8","#91BFDB","#4575B4")))(128)
+        if (to_cor) lat <- cov2cor(X)
+        else lat = X/max(diag(X))
+        lat[lower.tri(lat)] <- NA
+        n <- nrow(lat)
+        if (remove_names) {
+          colnames(lat) = NULL
+          rownames(lat) = NULL
+        }
+        return(lattice::levelplot(lat[n:1,],col.regions = clrs,
+                                xlab = "",ylab = "", main=title,
+                                colorkey = TRUE,at = seq(-1,1,length.out = 128),
+                                scales = list(cex = 0.2,x = list(rot = 45))))
+    }
+```
+
+```{r}
+# Plot sharing patterns with w > 0.01 
+tol = 1e-2
+U <- lapply(fit1$U,function (e) "[["(e,"mat"))
+n_component = sum(fit1$w > tol)
+w = order(fit1$w, decreasing = TRUE)
+indx = w[1:n_component]
+```
+
+```{r}
+plts = list()
+for (i in 1:length(indx)){
+  title = paste(names(U)[indx[i]], "w =", round(fit1$w[indx[i]], 6))
+  plts[[i]] = plot_sharing(U[[indx[i]]], to_cor = TRUE, title = title)
+}
+```
+
+```{r }
+unit = 4
+n_col = 3
+n_row = ceiling(n_component / n_col)
+pdf('t2d_patterns.pdf', width = unit * n_col, height = unit * n_row)
+do.call("grid.arrange", c(plts, list(ncol = n_col, nrow = n_row)))
+dev.off()
+```
+
+
