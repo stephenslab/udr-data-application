@@ -12,3 +12,6 @@ These are my analyses:
 
 + [mashr application](mashr_application.html)
 
++ [udr application to t2d data](t2d_application.html)
+
+
