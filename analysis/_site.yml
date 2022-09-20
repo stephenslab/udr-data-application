@@ -1,7 +1,7 @@
-name: "mash-single-cell-rnaseq"
+name: "udr-data-application"
 output_dir: ../docs
 navbar:
-  title: "mash-single-cell-rnaseq"
+  title: "udr-data-application"
   left:
   - text: Home
     href: index.html
