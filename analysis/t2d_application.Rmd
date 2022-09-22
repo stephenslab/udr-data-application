@@ -15,6 +15,8 @@ output: html_document
 library("readxl")
 library(udr)
 library(gridExtra)
+#devtools::install_github("eweine/MASHvFLASH", subdir = "mishmashr")
+library(mishmashr)
 dat = read_excel("./data/t2d.xlsx")
 ```
 
@@ -58,6 +60,25 @@ fit1 = ud_fit(f0, control = list(unconstrained.update = "ted", rank1.update = "t
                                    lambda = R), verbose=TRUE)
 ```
 
+## Run flashier using MASHvFLASH
+```{r}
+
+mash_data <- mashr::mash_set_data(Bhat = X, Shat = 1)
+fl <- mishmashr::mashy_flash(
+  mash_data,
+  greedy.Kmax = 5, 
+  backfit = TRUE,
+  verbose = 0
+)
+```
+
+```{r}
+U.fl = list()
+for (i in 1:ncol(fl$F.pm)){
+  U.fl[[i]] = fl$F.pm[,i] %*% t(fl$F.pm[,i])
+}
+```
+
 ## Plot sharing patterns 
 ```{r}
 plot_sharing = function(X, to_cor=FALSE, title="", remove_names=F) {
@@ -91,7 +112,7 @@ indx = w[1:n_component]
 plts = list()
 for (i in 1:length(indx)){
   title = paste(names(U)[indx[i]], "w =", round(fit1$w[indx[i]], 6))
-  plts[[i]] = plot_sharing(U[[indx[i]]], to_cor = TRUE, title = title)
+  plts[[i]] = plot_sharing(U[[indx[i]]], to_cor = TRUE)
 }
 ```
 
@@ -100,6 +121,22 @@ unit = 4
 n_col = 3
 n_row = ceiling(n_component / n_col)
 pdf('t2d_patterns.pdf', width = unit * n_col, height = unit * n_row)
+do.call("grid.arrange", c(plts, list(ncol = n_col, nrow = n_row)))
+dev.off()
+```
+## flashier patterns
+```{r}
+plts = list()
+for (i in 1:length(U.fl)){
+  plts[[i]] = plot_sharing(U.fl[[i]], to_cor = TRUE, title = title)
+}
+```
+
+```{r }
+unit = 4
+n_col = 3
+n_row = ceiling(n_component / n_col)
+pdf('t2d_patterns_flashier.pdf', width = unit * n_col, height = unit * n_row)
 do.call("grid.arrange", c(plts, list(ncol = n_col, nrow = n_row)))
 dev.off()
 ```
