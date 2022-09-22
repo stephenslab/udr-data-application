@@ -120,7 +120,7 @@ for (i in 1:length(indx)){
 unit = 4
 n_col = 3
 n_row = ceiling(n_component / n_col)
-pdf('t2d_patterns.pdf', width = unit * n_col, height = unit * n_row)
+pdf('t2d_patterns_udr.pdf', width = unit * n_col, height = unit * n_row)
 do.call("grid.arrange", c(plts, list(ncol = n_col, nrow = n_row)))
 dev.off()
 ```
@@ -128,7 +128,7 @@ dev.off()
 ```{r}
 plts = list()
 for (i in 1:length(U.fl)){
-  plts[[i]] = plot_sharing(U.fl[[i]], to_cor = TRUE, title = title)
+  plts[[i]] = plot_sharing(U.fl[[i]], to_cor = TRUE)
 }
 ```
 
@@ -139,6 +139,23 @@ n_row = ceiling(n_component / n_col)
 pdf('t2d_patterns_flashier.pdf', width = unit * n_col, height = unit * n_row)
 do.call("grid.arrange", c(plts, list(ncol = n_col, nrow = n_row)))
 dev.off()
+```
+
+## Compare factors
+```{r}
+## udr rank1 vectors
+### indx 1,2,3,4 are rank1 matrices
+par(mfrow = c(2,2))
+barplot(fit1$U[[1]]$vec)
+barplot(fit1$U[[2]]$vec)
+barplot(fit1$U[[3]]$vec)
+barplot(fit1$U[[4]]$vec)
+```
+```{r}
+par(mfrow = c(2,2))
+for (i in 1:ncol(fl$F.pm)){
+  barplot(fl$F.pm[,i])
+}
 ```
 
 
