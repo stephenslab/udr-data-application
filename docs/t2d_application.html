@@ -467,16 +467,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomstephenslabudrdataapplicationtree3742095f9a325e7a910ee01f9cb9ffb7752cd1f5targetblank3742095a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/udr-data-application/tree/3742095f9a325e7a910ee01f9cb9ffb7752cd1f5" target="_blank">3742095</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomstephenslabudrdataapplicationtreeebdffd581b8caf2cf472fbd2a3e3805d86cd352ftargetblankebdffd5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/stephenslab/udr-data-application/tree/ebdffd581b8caf2cf472fbd2a3e3805d86cd352f" target="_blank">ebdffd5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomstephenslabudrdataapplicationtree3742095f9a325e7a910ee01f9cb9ffb7752cd1f5targetblank3742095a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomstephenslabudrdataapplicationtreeebdffd581b8caf2cf472fbd2a3e3805d86cd352ftargetblankebdffd5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/stephenslab/udr-data-application/tree/3742095f9a325e7a910ee01f9cb9ffb7752cd1f5" target="_blank">3742095</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/stephenslab/udr-data-application/tree/ebdffd581b8caf2cf472fbd2a3e3805d86cd352f" target="_blank">ebdffd5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -488,6 +488,8 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/t2d_patterns_flashier.pdf
+    Untracked:  analysis/t2d_patterns_udr.pdf
     Untracked:  t2d_patterns.pdf
     Untracked:  t2d_patterns_flashier.pdf
 
@@ -528,6 +530,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/stephenslab/udr-data-application/blob/ebdffd581b8caf2cf472fbd2a3e3805d86cd352f/analysis/t2d_application.Rmd" target="_blank">ebdffd5</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2022-09-22
+</td>
+<td>
+wflow_publish("analysis/t2d_application.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/stephenslab/udr-data-application/1bc0b0cd046e555ba72b20b4ee6da783bb9f38c6/docs/t2d_application.html" target="_blank">1bc0b0c</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2022-09-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1318,7 +1354,7 @@ for (i in 1:length(indx)){
 <pre class="r"><code>unit = 4
 n_col = 3
 n_row = ceiling(n_component / n_col)
-pdf(&#39;t2d_patterns.pdf&#39;, width = unit * n_col, height = unit * n_row)
+pdf(&#39;t2d_patterns_udr.pdf&#39;, width = unit * n_col, height = unit * n_row)
 do.call(&quot;grid.arrange&quot;, c(plts, list(ncol = n_col, nrow = n_row)))
 dev.off()</code></pre>
 <pre><code>quartz_off_screen 
@@ -1328,7 +1364,7 @@ dev.off()</code></pre>
 <h2>flashier patterns</h2>
 <pre class="r"><code>plts = list()
 for (i in 1:length(U.fl)){
-  plts[[i]] = plot_sharing(U.fl[[i]], to_cor = TRUE, title = title)
+  plts[[i]] = plot_sharing(U.fl[[i]], to_cor = TRUE)
 }</code></pre>
 <pre class="r"><code>unit = 4
 n_col = 3
@@ -1338,6 +1374,22 @@ do.call(&quot;grid.arrange&quot;, c(plts, list(ncol = n_col, nrow = n_row)))
 dev.off()</code></pre>
 <pre><code>quartz_off_screen 
                 2 </code></pre>
+</div>
+<div id="compare-factors" class="section level2">
+<h2>Compare factors</h2>
+<pre class="r"><code>## udr rank1 vectors
+### indx 1,2,3,4 are rank1 matrices
+par(mfrow = c(2,2))
+barplot(fit1$U[[1]]$vec)
+barplot(fit1$U[[2]]$vec)
+barplot(fit1$U[[3]]$vec)
+barplot(fit1$U[[4]]$vec)</code></pre>
+<p><img src="figure/t2d_application.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow = c(2,2))
+for (i in 1:ncol(fl$F.pm)){
+  barplot(fl$F.pm[,i])
+}</code></pre>
+<p><img src="figure/t2d_application.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/t2d_application.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1368,20 +1420,21 @@ loaded via a namespace (and not attached):
  [1] Rcpp_1.0.8.3      horseshoe_0.2.0   invgamma_1.1      mvtnorm_1.1-3    
  [5] lattice_0.20-44   assertthat_0.2.1  rprojroot_2.0.2   digest_0.6.28    
  [9] utf8_1.2.2        truncnorm_1.0-8   R6_2.5.1          cellranger_1.1.0 
-[13] plyr_1.8.6        evaluate_0.14     ggplot2_3.3.5     pillar_1.6.4     
-[17] rlang_0.4.12      ebnm_0.1-59       irlba_2.3.5       whisker_0.4      
-[21] jquerylib_0.1.4   Matrix_1.3-4      rmarkdown_2.11    mashr_0.2.51     
-[25] splines_4.1.1     stringr_1.4.0     REBayes_2.50      munsell_0.5.0    
-[29] mixsqp_0.3-43     compiler_4.1.1    httpuv_1.6.3      xfun_0.27        
-[33] pkgconfig_2.0.3   SQUAREM_2021.1    htmltools_0.5.2   tidyselect_1.1.1 
-[37] tibble_3.1.5      fansi_0.5.0       crayon_1.4.1      dplyr_1.0.7      
-[41] later_1.3.0       grid_4.1.1        gtable_0.3.0      lifecycle_1.0.1  
-[45] git2r_0.28.0      magrittr_2.0.1    scales_1.1.1      stringi_1.7.5    
-[49] fs_1.5.0          promises_1.2.0.1  flashier_0.2.32   ellipsis_0.3.2   
-[53] vctrs_0.3.8       generics_0.1.2    trust_0.1-8       rmeta_3.0        
-[57] tools_4.1.1       glue_1.4.2        softImpute_1.4-1  purrr_0.3.4      
-[61] parallel_4.1.1    abind_1.4-5       fastmap_1.1.0     yaml_2.2.1       
-[65] colorspace_2.0-2  ashr_2.2-47       deconvolveR_1.2-1 knitr_1.36       </code></pre>
+[13] plyr_1.8.6        evaluate_0.14     highr_0.9         ggplot2_3.3.5    
+[17] pillar_1.6.4      rlang_0.4.12      ebnm_0.1-59       irlba_2.3.5      
+[21] whisker_0.4       jquerylib_0.1.4   Matrix_1.3-4      rmarkdown_2.11   
+[25] mashr_0.2.51      splines_4.1.1     stringr_1.4.0     REBayes_2.50     
+[29] munsell_0.5.0     mixsqp_0.3-43     compiler_4.1.1    httpuv_1.6.3     
+[33] xfun_0.27         pkgconfig_2.0.3   SQUAREM_2021.1    htmltools_0.5.2  
+[37] tidyselect_1.1.1  tibble_3.1.5      fansi_0.5.0       crayon_1.4.1     
+[41] dplyr_1.0.7       later_1.3.0       grid_4.1.1        gtable_0.3.0     
+[45] lifecycle_1.0.1   git2r_0.28.0      magrittr_2.0.1    scales_1.1.1     
+[49] stringi_1.7.5     fs_1.5.0          promises_1.2.0.1  flashier_0.2.32  
+[53] ellipsis_0.3.2    vctrs_0.3.8       generics_0.1.2    trust_0.1-8      
+[57] rmeta_3.0         tools_4.1.1       glue_1.4.2        softImpute_1.4-1 
+[61] purrr_0.3.4       parallel_4.1.1    abind_1.4-5       fastmap_1.1.0    
+[65] yaml_2.2.1        colorspace_2.0-2  ashr_2.2-47       deconvolveR_1.2-1
+[69] knitr_1.36       </code></pre>
 </div>
 </div>
 
